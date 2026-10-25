@@ -5,6 +5,7 @@ const configured = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(config.supabaseU
 const $ = (id) => document.getElementById(id);
 const GRAMS_PER_OUNCE = 28.349523125;
 const MILLILITERS_PER_FL_OUNCE = 29.5735295625;
+const PSI_PER_BAR = 14.5037738;
 const authView = $('authView'), journalView = $('journalView');
 let supabase, user, entries = [], authMode = 'login', coachEntryId = null;
 
@@ -48,7 +49,7 @@ const LABELS = {
 
 function textOrNull(id){return $(id).value.trim()||null}
 function numberOrNull(id){const value=$(id).value;return value===''?null:Number(value)}
-function numberForStorage(id){const value=numberOrNull(id);if(value===null)return null;if(id==='beanWeight'||id==='waterWeight'||id==='espressoYield')return value*GRAMS_PER_OUNCE;if(id==='waterVolume')return value*MILLILITERS_PER_FL_OUNCE;if(id==='waterTemp')return (value-32)*5/9;return value}
+function numberForStorage(id){const value=numberOrNull(id);if(value===null)return null;if(id==='beanWeight'||id==='waterWeight'||id==='espressoYield')return value*GRAMS_PER_OUNCE;if(id==='waterVolume')return value*MILLILITERS_PER_FL_OUNCE;if(id==='waterTemp')return (value-32)*5/9;if(id==='pressure')return value/PSI_PER_BAR;return value}
 function formatAmount(value,digits=2){return String(Number(Number(value).toFixed(digits)))}
 function ratioText(){const dose=Number($('beanWeight').value);const waterWeight=Number($('waterWeight').value);const waterVolume=Number($('waterVolume').value);if(!dose||(!waterWeight&&!waterVolume))return 'Add coffee and water amounts';const ratio=waterWeight?waterWeight/dose:(waterVolume*MILLILITERS_PER_FL_OUNCE)/(dose*GRAMS_PER_OUNCE);return `1 : ${ratio.toFixed(1).replace(/\.0$/,'')}${waterWeight?'':' approx.'}`}
 function updateRatio(){ $('ratioValue').textContent=ratioText(); }
@@ -57,7 +58,7 @@ async function loadEntries(){if(!user)return;const {data,error}=await supabase.f
 function escapeHTML(value=''){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function niceDate(value){return value?new Date(`${value}T12:00:00`).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):''}
 function ratingLabel(value){return value?`${value} out of 5`:''}
-function visibleValue(key,value){if(value===null||value===undefined||value==='')return '';if(key==='rating')return `${value}/5`;if(key==='drank_on'||key==='roast_date')return niceDate(value);if(key==='bean_weight_g'||key==='water_weight_g'||key==='espresso_yield_g')return `${formatAmount(Number(value)/GRAMS_PER_OUNCE)} oz`;if(key==='water_volume_ml')return `${formatAmount(Number(value)/MILLILITERS_PER_FL_OUNCE)} fl oz`;if(key==='water_temp_c')return `${formatAmount(Number(value)*9/5+32,1)} °F`;if(key==='brew_time_seconds'||key==='bloom_seconds')return `${value} sec`;if(key==='pressure_bar')return `${value} bar`;if(key==='pour_count')return `${value}`;return String(value)}
+function visibleValue(key,value){if(value===null||value===undefined||value==='')return '';if(key==='rating')return `${value}/5`;if(key==='drank_on'||key==='roast_date')return niceDate(value);if(key==='bean_weight_g'||key==='water_weight_g'||key==='espresso_yield_g')return `${formatAmount(Number(value)/GRAMS_PER_OUNCE)} oz`;if(key==='water_volume_ml')return `${formatAmount(Number(value)/MILLILITERS_PER_FL_OUNCE)} fl oz`;if(key==='water_temp_c')return `${formatAmount(Number(value)*9/5+32,1)} °F`;if(key==='brew_time_seconds'||key==='bloom_seconds')return `${value} sec`;if(key==='pressure_bar')return `${formatAmount(Number(value)*PSI_PER_BAR,1)} psi`;if(key==='pour_count')return `${value}`;return String(value)}
 function field(key,value,wide=false){if(value===null||value===undefined||value==='')return '';return `<div class="entry-detail${wide?' wide':''}"><strong>${escapeHTML(LABELS[key]||key)}</strong><span>${escapeHTML(visibleValue(key,value))}</span></div>`}
 function renderEntries(){
   const query=$('search').value.trim().toLowerCase();
@@ -134,4 +135,4 @@ $('entryForm').addEventListener('submit',async(event)=>{
 });
 async function deleteEntry(id){if(!confirm('Delete this coffee note?'))return;const {error}=await supabase.from('coffee_entries').delete().eq('id',id);if(error){setMessage('entryMessage',error.message);return}await loadEntries()}
 
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./service-worker.js?v=5').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./service-worker.js?v=6').catch(()=>{});
