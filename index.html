@@ -54,9 +54,43 @@
           <form id="entryForm">
             <label>Coffee name<input id="coffeeName" required maxlength="100" placeholder="e.g. Sunday morning flat white"></label>
             <div class="two-col"><label>Date<input id="coffeeDate" type="date" required></label><label>Rating <span class="optional">optional</span><select id="rating"><option value="">Choose</option><option value="5">★★★★★ · Loved it</option><option value="4">★★★★☆ · Really good</option><option value="3">★★★☆☆ · Nice</option><option value="2">★★☆☆☆ · Not for me</option><option value="1">★☆☆☆☆ · Would skip</option></select></label></div>
-            <label>Beans or café <span class="optional">optional</span><input id="source" maxlength="100" placeholder="Where it came from"></label>
-            <label>Brew method <span class="optional">optional</span><select id="method"><option value="">Choose a method</option><option>Espresso</option><option>Pour over</option><option>French press</option><option>AeroPress</option><option>Drip</option><option>Cold brew</option><option>Other</option></select></label>
-            <label>Your notes <span class="optional">optional</span><textarea id="notes" rows="4" maxlength="1200" placeholder="Taste, mood, who you shared it with…"></textarea></label>
+            <label>Beans or café <span class="optional">optional</span><input id="source" maxlength="100" placeholder="Roaster, café, or coffee name"></label>
+            <label>Brew method <span class="optional">optional</span><select id="method"><option value="">Choose a method</option><option>Espresso</option><option>Pour over</option><option>French press</option><option>AeroPress</option><option>Drip</option><option>Cold brew</option><option>Moka pot</option><option>Turkish coffee</option><option>Batch brew</option><option>Other</option></select></label>
+            <p class="form-hint">Just getting started? Save the name and date. Everything below is optional.</p>
+            <details class="detail-group">
+              <summary><span><strong>Coffee &amp; beans</strong><small>Origin, roast, variety, and batch details</small></span><span class="chevron">⌄</span></summary>
+              <div class="detail-fields">
+                <div class="two-col"><label>Roaster<input id="roaster" maxlength="120" placeholder="Who roasted it?"></label><label>Country / origin<input id="origin" maxlength="120" placeholder="e.g. Ethiopia, Yirgacheffe"></label></div>
+                <div class="two-col"><label>Farm, region, or producer<input id="farm" maxlength="160" placeholder="Farm or growing region"></label><label>Variety<input id="varietal" maxlength="120" placeholder="e.g. Bourbon, Gesha"></label></div>
+                <div class="two-col"><label>Processing<input id="processing" maxlength="80" placeholder="Washed, natural, honey…"></label><label>Roast level<select id="roastLevel"><option value="">Choose if known</option><option>Light</option><option>Light-medium</option><option>Medium</option><option>Medium-dark</option><option>Dark</option><option>Omni roast</option><option>Unknown</option></select></label></div>
+                <div class="two-col"><label>Roast date<input id="roastDate" type="date"></label><label>Lot or bag label<input id="batchId" maxlength="100" placeholder="Optional batch / lot"></label></div>
+              </div>
+            </details>
+            <details class="detail-group">
+              <summary><span><strong>Recipe &amp; equipment</strong><small>Dose, water, temperature, grind, and timing</small></span><span class="chevron">⌄</span></summary>
+              <div class="detail-fields">
+                <div class="two-col"><label>Coffee dose <span class="optional">grams</span><input id="beanWeight" type="number" min="0" max="500" step="0.1" inputmode="decimal" placeholder="e.g. 18"></label><label>Water volume <span class="optional">mL</span><input id="waterVolume" type="number" min="0" max="20000" step="1" inputmode="decimal" placeholder="e.g. 300"></label></div>
+                <div class="two-col"><label>Water weight <span class="optional">grams · if measured</span><input id="waterWeight" type="number" min="0" max="20000" step="0.1" inputmode="decimal" placeholder="Optional"></label><label>Calculated brew ratio<span id="ratioValue" class="ratio-value">Add coffee dose and water weight</span></label></div>
+                <div class="two-col"><label>Water temperature <span class="optional">°C</span><input id="waterTemp" type="number" min="0" max="110" step="0.1" inputmode="decimal" placeholder="e.g. 93"></label><label>Water / minerals<input id="waterType" maxlength="120" placeholder="Filtered, bottled, recipe…"></label></div>
+                <div class="two-col"><label>Grind texture<select id="grindType"><option value="">Choose if known</option><option>Extra fine</option><option>Fine</option><option>Medium-fine</option><option>Medium</option><option>Medium-coarse</option><option>Coarse</option><option>Extra coarse</option><option>Unknown</option></select></label><label>Grinder &amp; setting<input id="grinder" maxlength="120" placeholder="e.g. grinder model, setting 18"></label></div>
+                <div class="two-col"><label>Brewer / machine<input id="brewer" maxlength="120" placeholder="e.g. V60, Flair, Linea Mini"></label><label>Filter / basket<input id="filterType" maxlength="120" placeholder="Paper type, basket size…"></label></div>
+                <div class="two-col"><label>Total brew / shot time <span class="optional">seconds</span><input id="brewTime" type="number" min="0" max="7200" step="1" inputmode="numeric" placeholder="e.g. 32"></label><label>Bloom time <span class="optional">seconds · pour-over</span><input id="bloomTime" type="number" min="0" max="1800" step="1" inputmode="numeric" placeholder="Optional"></label></div>
+                <div class="two-col"><label>Number of pours <input id="pourCount" type="number" min="0" max="50" step="1" inputmode="numeric" placeholder="Optional"></label><label>Espresso pressure <span class="optional">bar</span><input id="pressure" type="number" min="0" max="30" step="0.1" inputmode="decimal" placeholder="Optional"></label></div>
+                <div class="two-col"><label>Espresso yield <span class="optional">grams in cup</span><input id="espressoYield" type="number" min="0" max="2000" step="0.1" inputmode="decimal" placeholder="Optional"></label><span></span></div>
+                <label>Recipe / technique<textarea id="brewRecipe" rows="3" maxlength="1500" placeholder="Pour schedule, agitation, pre-infusion, or steps to repeat…"></textarea></label>
+              </div>
+            </details>
+            <details class="detail-group">
+              <summary><span><strong>Tasting notes</strong><small>Aroma, flavor, acidity, sweetness, body, and finish</small></span><span class="chevron">⌄</span></summary>
+              <div class="detail-fields">
+                <label>Aroma<input id="aroma" maxlength="240" placeholder="What do you smell? Floral, cocoa, fruit…"></label>
+                <label>Flavors<input id="flavor" maxlength="300" placeholder="What flavors stand out? Try your own words"></label>
+                <div class="two-col"><label>Acidity <span class="optional">1 low · 5 high</span><select id="acidity"><option value="">Not rated</option><option value="1">1 · Very low</option><option value="2">2 · Low</option><option value="3">3 · Balanced</option><option value="4">4 · Bright</option><option value="5">5 · Very bright</option></select></label><label>Sweetness <span class="optional">1 low · 5 high</span><select id="sweetness"><option value="">Not rated</option><option value="1">1 · Very low</option><option value="2">2 · Low</option><option value="3">3 · Balanced</option><option value="4">4 · Sweet</option><option value="5">5 · Very sweet</option></select></label></div>
+                <div class="two-col"><label>Bitterness <span class="optional">1 low · 5 high</span><select id="bitterness"><option value="">Not rated</option><option value="1">1 · Very low</option><option value="2">2 · Low</option><option value="3">3 · Balanced</option><option value="4">4 · Noticeable</option><option value="5">5 · Very strong</option></select></label><label>Body <span class="optional">1 light · 5 full</span><select id="body"><option value="">Not rated</option><option value="1">1 · Very light</option><option value="2">2 · Light</option><option value="3">3 · Medium</option><option value="4">4 · Full</option><option value="5">5 · Very full</option></select></label></div>
+                <label>Finish / aftertaste<input id="finish" maxlength="240" placeholder="What stays with you after the sip?"></label>
+              </div>
+            </details>
+            <label>Your notes <span class="optional">optional</span><textarea id="notes" rows="3" maxlength="1200" placeholder="How it turned out, what you would change, or who you shared it with…"></textarea></label>
             <button class="button primary full" type="submit">Save this cup <span>↗</span></button>
             <p id="entryMessage" class="message" role="status"></p>
           </form>
