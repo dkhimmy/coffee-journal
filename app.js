@@ -3,6 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const config = window.COFFEE_CONFIG || {};
 const configured = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(config.supabaseUrl || '') && /^(sb_publishable_|eyJ)/.test(config.supabaseKey || '') && !String(config.supabaseKey).includes('YOUR_');
 const $ = (id) => document.getElementById(id);
+const GRAMS_PER_OUNCE = 28.349523125;
+const MILLILITERS_PER_FL_OUNCE = 29.5735295625;
 const authView = $('authView'), journalView = $('journalView');
 let supabase, user, entries = [], authMode = 'login', coachEntryId = null;
 
@@ -46,14 +48,16 @@ const LABELS = {
 
 function textOrNull(id){return $(id).value.trim()||null}
 function numberOrNull(id){const value=$(id).value;return value===''?null:Number(value)}
-function ratioText(){const dose=Number($('beanWeight').value);const water=Number($('waterWeight').value||$('waterVolume').value);if(!dose||!water)return 'Add coffee dose and water weight';const ratio=(water/dose).toFixed(1).replace(/\.0$/,'');return `1 : ${ratio}${$('waterWeight').value?'':' approx.'}`}
+function numberForStorage(id){const value=numberOrNull(id);if(value===null)return null;if(id==='beanWeight'||id==='waterWeight'||id==='espressoYield')return value*GRAMS_PER_OUNCE;if(id==='waterVolume')return value*MILLILITERS_PER_FL_OUNCE;if(id==='waterTemp')return (value-32)*5/9;return value}
+function formatAmount(value,digits=2){return String(Number(Number(value).toFixed(digits)))}
+function ratioText(){const dose=Number($('beanWeight').value);const waterWeight=Number($('waterWeight').value);const waterVolume=Number($('waterVolume').value);if(!dose||(!waterWeight&&!waterVolume))return 'Add coffee and water amounts';const ratio=waterWeight?waterWeight/dose:(waterVolume*MILLILITERS_PER_FL_OUNCE)/(dose*GRAMS_PER_OUNCE);return `1 : ${ratio.toFixed(1).replace(/\.0$/,'')}${waterWeight?'':' approx.'}`}
 function updateRatio(){ $('ratioValue').textContent=ratioText(); }
 
 async function loadEntries(){if(!user)return;const {data,error}=await supabase.from('coffee_entries').select('*').order('drank_on',{ascending:false}).order('created_at',{ascending:false});if(error){setMessage('entryMessage',error.message);return}entries=data||[];renderEntries()}
 function escapeHTML(value=''){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function niceDate(value){return value?new Date(`${value}T12:00:00`).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):''}
 function ratingLabel(value){return value?`${value} out of 5`:''}
-function visibleValue(key,value){if(value===null||value===undefined||value==='')return '';if(key==='rating')return `${value}/5`;if(key==='drank_on'||key==='roast_date')return niceDate(value);if(key==='bean_weight_g')return `${value} g`;if(key==='water_volume_ml')return `${value} mL`;if(key==='water_weight_g')return `${value} g`;if(key==='water_temp_c')return `${value} °C`;if(key==='brew_time_seconds'||key==='bloom_seconds')return `${value} sec`;if(key==='pressure_bar')return `${value} bar`;if(key==='espresso_yield_g')return `${value} g`;if(key==='pour_count')return `${value}`;return String(value)}
+function visibleValue(key,value){if(value===null||value===undefined||value==='')return '';if(key==='rating')return `${value}/5`;if(key==='drank_on'||key==='roast_date')return niceDate(value);if(key==='bean_weight_g'||key==='water_weight_g'||key==='espresso_yield_g')return `${formatAmount(Number(value)/GRAMS_PER_OUNCE)} oz`;if(key==='water_volume_ml')return `${formatAmount(Number(value)/MILLILITERS_PER_FL_OUNCE)} fl oz`;if(key==='water_temp_c')return `${formatAmount(Number(value)*9/5+32,1)} °F`;if(key==='brew_time_seconds'||key==='bloom_seconds')return `${value} sec`;if(key==='pressure_bar')return `${value} bar`;if(key==='pour_count')return `${value}`;return String(value)}
 function field(key,value,wide=false){if(value===null||value===undefined||value==='')return '';return `<div class="entry-detail${wide?' wide':''}"><strong>${escapeHTML(LABELS[key]||key)}</strong><span>${escapeHTML(visibleValue(key,value))}</span></div>`}
 function renderEntries(){
   const query=$('search').value.trim().toLowerCase();
@@ -61,7 +65,7 @@ function renderEntries(){
   $('entryCount').textContent=entries.length?`· ${entries.length}`:'';
   if(!shown.length){$('entries').innerHTML=`<div class="empty-state"><span>☕</span><h3>${entries.length?'No cups found':'Your first cup is waiting'}</h3><p>${entries.length?'Try another search.':'Add a note to start your journal.'}</p></div>`;renderCoach();return}
   $('entries').innerHTML=shown.map(entry=>{
-    const facts=[entry.bean_weight_g&&`${entry.bean_weight_g} g dose`,entry.water_volume_ml&&`${entry.water_volume_ml} mL water`,entry.water_temp_c&&`${entry.water_temp_c} °C`,entry.grind_type,entry.brew_time_seconds&&`${entry.brew_time_seconds}s`,entry.bean_weight_g&&(entry.water_weight_g||entry.water_volume_ml)&&ratioTextForEntry(entry)].filter(Boolean);
+    const facts=[entry.bean_weight_g&&`${visibleValue('bean_weight_g',entry.bean_weight_g)} dose`,entry.water_volume_ml&&`${visibleValue('water_volume_ml',entry.water_volume_ml)} water`,entry.water_temp_c&&visibleValue('water_temp_c',entry.water_temp_c),entry.grind_type,entry.brew_time_seconds&&`${entry.brew_time_seconds}s`,entry.bean_weight_g&&(entry.water_weight_g||entry.water_volume_ml)&&ratioTextForEntry(entry)].filter(Boolean);
     const detailKeys=['roaster','origin','farm','varietal','processing','roast_level','roast_date','batch_id','bean_weight_g','water_volume_ml','water_weight_g','water_temp_c','water_type','grind_type','grinder','brewer','filter_type','brew_time_seconds','bloom_seconds','pour_count','pressure_bar','espresso_yield_g','brew_recipe','aroma','flavor','acidity_score','sweetness_score','bitterness_score','body_score','finish','notes'];
     const detailHtml=detailKeys.map(key=>field(key,entry[key],['brew_recipe','notes'].includes(key))).join('');
     const sourceLine=[entry.source,entry.origin,entry.roaster].filter(Boolean).join(' · ');
@@ -81,7 +85,7 @@ function renderCoach(){
   const suggestions=[];
   if(!current){
     intro.textContent='Log and rate a few cups, then this coach can suggest one small change at a time.';
-    list.innerHTML='<li>For a balanced starting point, try about 1 g coffee to 16 g water, then adjust to taste.</li><li>Keep the coffee, dose, and method steady while changing one variable between cups.</li>';
+    list.innerHTML='<li>For a balanced starting point, try about a 1:16 coffee-to-water ratio by weight, then adjust to taste.</li><li>Keep the coffee, dose, and method steady while changing one variable between cups.</li>';
   } else {
     const method=String(current.method||'').toLowerCase(), espresso=method.includes('espresso');
     const text=[current.flavor,current.aroma,current.finish,current.notes].filter(Boolean).join(' ').toLowerCase();
@@ -91,15 +95,15 @@ function renderCoach(){
     const dose=Number(current.bean_weight_g), water=Number(espresso?current.espresso_yield_g:(current.water_weight_g||current.water_volume_ml));
     intro.textContent=`Ideas for ${current.name||'your selected cup'}${current.rating?` (${current.rating}/5)`:''}. Change one thing next time, then compare.`;
     if(espresso){
-      if(dose&&water)suggestions.push(`Your dose-to-yield is about 1:${(water/dose).toFixed(1)}. ${bitter?'Try stopping a little earlier, reducing yield by about 2–3 g, and keep grind and dose steady.':sour||thin?'Try a slightly finer grind while keeping dose and yield the same.':'Keep this ratio as your baseline and change only one setting next time.'}`);
+      if(dose&&water)suggestions.push(`Your dose-to-yield is about 1:${(water/dose).toFixed(1)}. ${bitter?'Try stopping a little earlier, reducing yield by about 0.1 oz, and keep grind and dose steady.':sour||thin?'Try a slightly finer grind while keeping dose and yield the same.':'Keep this ratio as your baseline and change only one setting next time.'}`);
       else suggestions.push('For espresso, record dose, yield, and shot time. A starting yield near twice the dry dose gives you a useful baseline.');
     } else {
       if(bitter)suggestions.push(`The bitter or harsh notes suggest trying a slightly coarser grind next brew. Keep temperature and recipe the same so you can judge the change.`);
       else if(sour)suggestions.push('The sharp or sour notes can come from a cup extracting too quickly. Try a slightly finer grind, changing nothing else.');
-      if(thin&&dose&&water&&!bitter){const target=Math.max(1,Math.round(water*.94));suggestions.push(`For a fuller cup, keep the coffee dose and reduce water from ${water} to about ${target} g/mL (roughly 6% less).`)}
-      if(!suggestions.length&&current.water_temp_c&&Number(current.water_temp_c)<94)suggestions.push('If the cup tastes sharp or muted, try raising water temperature by 1–2 °C while keeping grind and timing steady.');
+      if(thin&&dose&&water&&!bitter){const target=Math.max(1,water*.94);const currentAmount=current.water_weight_g?`${formatAmount(water/GRAMS_PER_OUNCE)} oz`:current.water_volume_ml?`${formatAmount(water/MILLILITERS_PER_FL_OUNCE)} fl oz`:null;const targetAmount=current.water_weight_g?`${formatAmount(target/GRAMS_PER_OUNCE)} oz`:current.water_volume_ml?`${formatAmount(target/MILLILITERS_PER_FL_OUNCE)} fl oz`:null;suggestions.push(`For a fuller cup, keep the coffee dose and reduce water${currentAmount?` from ${currentAmount}`:''}${targetAmount?` to about ${targetAmount}`:' a little'} (roughly 6% less).`)}
+      if(!suggestions.length&&current.water_temp_c&&Number(current.water_temp_c)<94)suggestions.push('If the cup tastes sharp or muted, try raising water temperature by 2–4 °F while keeping grind and timing steady.');
       if(!suggestions.length&&current.brew_time_seconds)suggestions.push('No strong taste pattern stands out. Keep this recipe as a baseline and change just one variable, such as grind, by a small step.');
-      if(!suggestions.length)suggestions.push('For a balanced starting point, try about 1 g coffee to 16 g water, then adjust to taste. Add taste words or scores to make the next suggestion more specific.');
+    if(!suggestions.length)suggestions.push('For a balanced starting point, try about a 1:16 coffee-to-water ratio by weight, then adjust to taste. Add taste words or scores to make the next suggestion more specific.');
     }
     if(Number(current.bitterness_score)>=4&&sour)suggestions.push('You noted both sharpness and bitterness; taste is personal. Change only grind first and see which note moves.');
     list.innerHTML=suggestions.slice(0,3).map(item=>`<li>${escapeHTML(item)}</li>`).join('');
@@ -122,7 +126,7 @@ $('entryForm').addEventListener('submit',async(event)=>{
   event.preventDefault();if(!user)return;
   const payload={user_id:user.id,name:$('coffeeName').value.trim(),drank_on:$('coffeeDate').value,rating:numberOrNull('rating'),source:textOrNull('source'),method:textOrNull('method'),notes:textOrNull('notes'),roast_date:$('roastDate').value||null};
   TEXT_FIELDS.forEach(([id,column])=>payload[column]=textOrNull(id));
-  NUMBER_FIELDS.forEach(([id,column])=>payload[column]=numberOrNull(id));
+  NUMBER_FIELDS.forEach(([id,column])=>payload[column]=numberForStorage(id));
   const submit=event.submitter;submit.disabled=true;setMessage('entryMessage','Saving this cup…');
   const {error}=await supabase.from('coffee_entries').insert(payload);submit.disabled=false;
   if(error){setMessage('entryMessage',error.message);return}
@@ -130,4 +134,4 @@ $('entryForm').addEventListener('submit',async(event)=>{
 });
 async function deleteEntry(id){if(!confirm('Delete this coffee note?'))return;const {error}=await supabase.from('coffee_entries').delete().eq('id',id);if(error){setMessage('entryMessage',error.message);return}await loadEntries()}
 
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./service-worker.js?v=3').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./service-worker.js?v=4').catch(()=>{});
