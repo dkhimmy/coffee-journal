@@ -1,4 +1,4 @@
-# Little Coffee Journal
+# Brendan's Coffee Journal
 
 A private-per-account, iPhone-friendly coffee journal that can be installed from Safari. Entries are stored in Supabase and protected by row-level security. Detailed brew fields cover coffee origin and roast, dose, water, temperature, grind, equipment, timing, recipe, espresso yield, and tasting notes. Every detail is optional.
 

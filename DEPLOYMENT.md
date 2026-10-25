@@ -1,4 +1,4 @@
-# Little Coffee Journal · setup and deployment
+# Brendan's Coffee Journal · setup and deployment
 
 This is a static, iPhone-friendly Progressive Web App. Supabase handles sign-in and stores each person’s entries. GitHub Pages serves the app. The browser contains only the Supabase **publishable** key (or legacy `anon` key); never put a `service_role` or secret key in this project.
 

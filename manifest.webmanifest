@@ -1,6 +1,6 @@
 {
-  "name": "Little Coffee Journal",
-  "short_name": "Coffee Journal",
+  "name": "Brendan’s Coffee Journal",
+  "short_name": "Brendan’s Coffee",
   "description": "A quiet place to keep your coffee notes.",
   "start_url": "./",
   "scope": "./",
