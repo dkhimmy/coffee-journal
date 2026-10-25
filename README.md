@@ -2,6 +2,8 @@
 
 A private-per-account, iPhone-friendly coffee journal that can be installed from Safari. Entries are stored in Supabase and protected by row-level security. Detailed brew fields cover coffee origin and roast, dose, water, temperature, grind, equipment, timing, recipe, espresso yield, and tasting notes. Every detail is optional.
 
+The free brew coach uses simple, explainable rules in the browser to suggest one recipe adjustment and possible bean or brew directions from highly rated cups. It does not use generative AI, require an AI API key, or send brew notes to another service.
+
 ## Setup
 
 1. The app uses this project's Supabase publishable key in `config.js`. Publishable keys are public browser configuration; never put a Supabase secret or `service_role` key here.

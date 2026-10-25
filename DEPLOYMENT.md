@@ -2,6 +2,8 @@
 
 This is a static, iPhone-friendly Progressive Web App. Supabase handles sign-in and stores each person’s entries. GitHub Pages serves the app. The browser contains only the Supabase **publishable** key (or legacy `anon` key); never put a `service_role` or secret key in this project.
 
+The brew coach is free and rule-based. It runs in the browser, uses the signed-in user's own journal entries, and does not require an AI API key or send brew notes to a generative AI service.
+
 ## 1. Prepare Supabase
 
 1. Open your project in the Supabase dashboard.
@@ -27,7 +29,7 @@ Open the published Pages URL in **Safari**. Tap **Share → Add to Home Screen �
 
 ## If something goes wrong
 
-- **Setup needed:** `config.js` still has placeholders or a key with the wrong format.
+- **Setup needed:** open the published `https://dkhimmy.github.io/coffee-journal/` address instead of a downloaded `file://` copy. The project's `config.js` is already filled in with its public Supabase URL and publishable key.
 - **Table missing / relation not found:** run `supabase-setup.sql` in the correct project’s SQL Editor.
 - **Email confirmation link returns to the wrong place:** add the exact Pages address (including repository path and trailing slash) to Supabase Redirect URLs.
 - **Permission denied / entries do not load:** check that RLS is enabled and all four policies from the SQL exist. Do not “fix” this by disabling RLS or using a secret key.

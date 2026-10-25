@@ -97,6 +97,13 @@
         </section>
         <section class="entries-area">
           <div class="entries-heading"><div><p class="eyebrow">Your collection</p><h2>Recent cups <span id="entryCount" class="count"></span></h2></div><label class="search-label"><span class="sr-only">Search entries</span><input id="search" type="search" placeholder="Find a cup…"></label></div>
+          <section class="coach-card" aria-live="polite" aria-labelledby="coachTitle">
+            <div class="coach-heading"><div><p class="eyebrow">A free, private brew coach</p><h3 id="coachTitle">Fine-tune a cup</h3></div><span class="coach-badge">Runs in this app</span></div>
+            <p id="coachIntro" class="coach-intro">Save and rate a cup to get simple, practical ideas for your next brew. Your entries stay in your private journal.</p>
+            <ul id="coachSuggestions" class="coach-list"><li>Change one brewing variable at a time so you can tell what helped.</li></ul>
+            <div class="bean-suggestions"><strong>Beans and brews you may like</strong><p id="beanSuggestions">After you rate a few cups, this section will look for patterns in the ones you enjoyed most.</p></div>
+            <p class="coach-disclaimer">Suggestions use simple brewing rules and your highly rated entries. This feature is not generative AI and does not send your coffee details to another service.</p>
+          </section>
           <div id="entries" class="entries"><div class="empty-state"><span>☕</span><h3>Your first cup is waiting</h3><p>Add a note to start your journal.</p></div></div>
           <p class="sync-note"><span>●</span> Private cloud sync is on when signed in</p>
         </section>
