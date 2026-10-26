@@ -69,14 +69,14 @@
             <details class="detail-group">
               <summary><span><strong>Recipe &amp; equipment</strong><small>Dose, water, temperature, grind, and timing</small></span><span class="chevron">⌄</span></summary>
               <div class="detail-fields">
-                <div class="two-col"><label>Coffee dose <span class="optional">oz by weight</span><input id="beanWeight" type="number" min="0" max="18" step="0.01" inputmode="decimal" placeholder="e.g. 0.63"></label><label>Water volume <span class="optional">fl oz</span><input id="waterVolume" type="number" min="0" max="700" step="0.1" inputmode="decimal" placeholder="e.g. 10"></label></div>
-                <div class="two-col"><label>Water weight <span class="optional">oz by weight · if measured</span><input id="waterWeight" type="number" min="0" max="700" step="0.01" inputmode="decimal" placeholder="Optional"></label><label>Calculated brew ratio<span id="ratioValue" class="ratio-value">Add coffee and water amounts</span></label></div>
+                <div class="two-col"><label>Coffee dose <span class="optional">grams (g)</span><input id="beanWeight" type="number" min="0" max="500" step="0.1" inputmode="decimal" placeholder="e.g. 18"></label><label>Water volume <span class="optional">fl oz</span><input id="waterVolume" type="number" min="0" max="700" step="0.1" inputmode="decimal" placeholder="e.g. 10"></label></div>
+                <div class="two-col"><label>Water weight <span class="optional">grams (g) · if measured</span><input id="waterWeight" type="number" min="0" max="20000" step="0.1" inputmode="decimal" placeholder="Optional"></label><label>Calculated brew ratio<span id="ratioValue" class="ratio-value">Add coffee and water amounts</span></label></div>
                 <div class="two-col"><label>Water temperature <span class="optional">°F</span><input id="waterTemp" type="number" min="32" max="230" step="0.1" inputmode="decimal" placeholder="e.g. 200"></label><label>Water / minerals<input id="waterType" maxlength="120" placeholder="Filtered, bottled, recipe…"></label></div>
                 <div class="two-col"><label>Grind texture<select id="grindType"><option value="">Choose if known</option><option>Extra fine</option><option>Fine</option><option>Medium-fine</option><option>Medium</option><option>Medium-coarse</option><option>Coarse</option><option>Extra coarse</option><option>Unknown</option></select></label><label>Grinder &amp; setting<input id="grinder" maxlength="120" placeholder="e.g. grinder model, setting 18"></label></div>
                 <div class="two-col"><label>Brewer / machine<input id="brewer" maxlength="120" placeholder="e.g. V60, Flair, Linea Mini"></label><label>Filter / basket<input id="filterType" maxlength="120" placeholder="Paper type, basket size…"></label></div>
                 <div class="two-col"><label>Total brew / shot time <span class="optional">seconds</span><input id="brewTime" type="number" min="0" max="7200" step="1" inputmode="numeric" placeholder="e.g. 32"></label><label>Bloom time <span class="optional">seconds · pour-over</span><input id="bloomTime" type="number" min="0" max="1800" step="1" inputmode="numeric" placeholder="Optional"></label></div>
                 <div class="two-col"><label>Number of pours <input id="pourCount" type="number" min="0" max="50" step="1" inputmode="numeric" placeholder="Optional"></label><label>Espresso pressure <span class="optional">psi</span><input id="pressure" type="number" min="0" max="450" step="0.1" inputmode="decimal" placeholder="e.g. 130"></label></div>
-                <div class="two-col"><label>Espresso yield <span class="optional">oz by weight in cup</span><input id="espressoYield" type="number" min="0" max="75" step="0.01" inputmode="decimal" placeholder="Optional"></label><span></span></div>
+                <div class="two-col"><label>Espresso yield <span class="optional">grams (g) in cup</span><input id="espressoYield" type="number" min="0" max="2000" step="0.1" inputmode="decimal" placeholder="Optional"></label><span></span></div>
                 <label>Recipe / technique<textarea id="brewRecipe" rows="3" maxlength="1500" placeholder="Pour schedule, agitation, pre-infusion, or steps to repeat…"></textarea></label>
               </div>
             </details>
@@ -91,7 +91,8 @@
               </div>
             </details>
             <label>Your notes <span class="optional">optional</span><textarea id="notes" rows="3" maxlength="1200" placeholder="How it turned out, what you would change, or who you shared it with…"></textarea></label>
-            <button class="button primary full" type="submit">Save this cup <span>↗</span></button>
+            <button id="saveEntryButton" class="button primary full" type="submit">Save this cup <span>↗</span></button>
+            <button id="cancelEditButton" class="button full cancel-edit" type="button" hidden>Cancel editing</button>
             <p id="entryMessage" class="message" role="status"></p>
           </form>
         </section>
@@ -112,6 +113,6 @@
     <footer><span>Made for slow sips and good memories.</span><a href="DEPLOYMENT.md">Setup guide</a></footer>
   </main>
   <script src="config.js"></script>
-  <script type="module" src="app.js?v=6"></script>
+  <script type="module" src="app.js?v=7"></script>
 </body>
 </html>
