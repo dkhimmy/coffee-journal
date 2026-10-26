@@ -2,7 +2,7 @@
 
 This is a static, iPhone-friendly Progressive Web App. Supabase handles sign-in and stores each person’s entries. GitHub Pages serves the app. The browser contains only the Supabase **publishable** key (or legacy `anon` key); never put a `service_role` or secret key in this project.
 
-The brew coach is free and rule-based. It runs in the browser, uses the signed-in user's own journal entries, and does not require an AI API key or send brew notes to a generative AI service. Measurements are entered and displayed in U.S. customary units (oz, fl oz, °F, and psi); the app converts values for storage and keeps ratios accurate.
+The brew coach is free and rule-based. It runs in the browser, uses the signed-in user's own journal entries, and does not require an AI API key or send brew notes to a generative AI service. Coffee dose, water weight, and espresso yield are entered and displayed in grams; water volume uses fl oz, temperature uses °F, and pressure uses psi. The app converts values for storage and keeps ratios accurate.
 
 ## 1. Prepare Supabase
 
@@ -40,7 +40,7 @@ Open the published Pages URL in **Safari**. Tap **Share → Add to Home Screen �
 - `index.html`, `styles.css`, `app.js`: the app.
 - `config.js`: public Supabase URL and publishable/anon key placeholders.
 - `supabase-setup.sql`: table and private-per-user policies.
-- Detailed entries include origin, varietal, processing, roast, dose, water amount and temperature, grind, equipment, timings, recipe, espresso yield and pressure, and sensory notes/scores. Amounts display in ounces/fluid ounces, temperature in Fahrenheit, and pressure in psi.
+- Detailed entries include origin, varietal, processing, roast, dose, water amount and temperature, grind, equipment, timings, recipe, espresso yield and pressure, and sensory notes/scores. Coffee dose, water weight, and espresso yield display in grams; water volume displays in fluid ounces, temperature in Fahrenheit, and pressure in psi.
 - `manifest.webmanifest`, `service-worker.js`, `icon.svg`: installable PWA shell.
 
 Supabase’s publishable key is intended for public clients and does not bypass RLS. Signed-in requests include the user’s auth token, and policies compare the row’s `user_id` to `auth.uid()`. See [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys), [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security), and [GitHub Pages](https://docs.github.com/en/pages).
